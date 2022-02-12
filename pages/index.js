@@ -1,166 +1,229 @@
+import React, { useEffect, useState } from 'react';
 import appConfig from '../config.json';
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
-function GlobalStyle() {
-    return (
-        <style global jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: 'Open Sans', sans-serif;
-      }
-      /* App fit Height */ 
-      html, body, #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */ 
-    `}</style>
-    );
-}
+import {useRouter} from 'next/router';
+//import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+
 function Titulo(props) {
-    const Tag = props.tag || 'h1';
+    console.log(props.children);
+    const Tag = props.tag || h1;
+
     return (
         <>
             <Tag>{props.children}</Tag>
             <style jsx>{`
             ${Tag} {
-                color: ${appConfig.theme.colors.neutrals['000']};
-                font-size: 24px;
-                font-weight: 600;
+            color: ${appConfig.theme.colors.neutrals['000']};
+            font-size: 24px;
+            font-weight: 600;
             }
-            `}</style>
+        `}</style>
         </>
     );
 }
 
-//Componente React
-// function HomePage() {
-//     // JSX
-//     return (
-//         <div>
-//             <GlobalStyle />
-//             <Titulo tag="h2">Boas vindas de volta!</Titulo>
-//             <h2>Discord - Alura Matrix</h2>
-//         </div>
-//     )
-// }
-//export default HomePage
 
-export default function PaginaInicial() {
-    const username = 'damMota';
-
+/* function HomePage() {
     return (
-        <>
-            <GlobalStyle />
+    <div>
+        <GlobalStyle />
+        <Titulo tag="h1">Boas vindas de volta!!!</Titulo>
+        <h2>Discord - Alura Matrix</h2>
+            
+    </div>
+    
+    )
+  }
+  
+  export default HomePage */
+
+  export default function PaginaInicial() {
+    //const username = 'peas';
+    const initDatauser = {
+      id:1,
+      name:"",
+    }
+    const [username, setUsername] = React.useState('damMota');
+    const [usernamevalid, setUsernamevalid] = React.useState('damMota');
+    const [showImage, setShowImage] = React.useState(true);
+    const [datauser, setUserdata] = useState(initDatauser);   
+    const roteamento = useRouter();
+    
+      const url = 'https://api.github.com/users/'+usernamevalid;
+
+      React.useEffect(() => {
+        fetch(url)
+       .then(async(response) => {
+        const lido =  await response.json();
+          console.log('Conteúdo git:', lido );
+          if(lido.id != datauser.id){
+                 setUserdata(lido);
+           } 
+         
+        })
+      },[usernamevalid]);
+
+      //  fetch(url)
+      //  .then(async(response) => {
+      //    if(response.ok) {
+      //      return await response.json()
+      //    }
+      //    throw response;
+      //   })
+      //   .then(data => {
+      //     if(data.id != datauser.id){
+      //       setUserdata(data);
+      //     }
+      //     console.log("Conteúdo: ",datauser);
+      //   })
+      //   .catch(error => {
+      //     console.log("Error fetching data", error);
+      //     // if(datauser.id != initDatauser.id){
+      //     //   setUserdata(initDatauser);
+      //     // }
+      //   })
+      //   .finally(() => {
+      //     console.log("Cosulta ao git finalizada!");
+      //   })
+      
+     return (
+      <>
+        
+        <Box
+          styleSheet={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backgroundColor: appConfig.theme.colors.primary[501],
+            backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
+            backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
+          }}
+        >
+          <Box
+            styleSheet={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexDirection: {
+                xs: 'column',
+                sm: 'row',
+              },
+              width: '100%', maxWidth: '700px',
+              borderRadius: '5px', padding: '32px', margin: '16px',
+              boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
+              backgroundColor: appConfig.theme.colors.neutrals[700],
+            }}
+          >
+            {/* Formulário */}
             <Box
-                styleSheet={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    backgroundColor: appConfig.theme.colors.primary[500],
-                    backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
-                    backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
-                }}
-
+              as="form"
+              onSubmit={function (event){
+                event.preventDefault();
+                console.log('Alguem submeteu o form');
+                roteamento.push(`/chat?username=${username}`);
+              }}
+              styleSheet={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
+              }}
             >
-                <Box
-                    styleSheet={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        flexDirection: {
-                            xs: 'column',
-                            sm: 'row',
-                        },
-                        width: '100%', maxWidth: '700px',
-                        borderRadius: '5px', padding: '32px', margin: '16px',
-                        boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
-                        backgroundColor: appConfig.theme.colors.neutrals[700],
-                    }}
-                >
+              <Titulo tag="h2">Boas vindas de volta!</Titulo>
+              <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
+                {appConfig.name}
+              </Text>
+              
+              {/* <input 
+                type="text"
+                value={username}
+                onChange={function (event){
+                  console.log("usuario digitou", event);
+                  // Onde ta o valor?
+                  const valor = event.target.value;
+                  //trocar valor variavel
+                  setUsername(valor);
+                }}
+              /> */}
 
-                    <Box
-                        as="form"
-                        styleSheet={{
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                            width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
-                        }}
-                    >
-                        <Titulo tag="h2">Boas vindas de volta!</Titulo>
-                        <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
-                            {appConfig.name}
-                        </Text>
-
-                        <TextField
-                            fullWidth
-                            textFieldColors={{
-                                neutral: {
-                                    textColor: appConfig.theme.colors.neutrals[200],
-                                    mainColor: appConfig.theme.colors.neutrals[900],
-                                    mainColorHighlight: appConfig.theme.colors.primary[500],
-                                    backgroundColor: appConfig.theme.colors.neutrals[800],
-                                },
-                            }}
-                        />
-                        <Button
-                            type='submit'
-                            label='Entrar'
-                            fullWidth
-                            buttonColors={{
-                                contrastColor: appConfig.theme.colors.neutrals["000"],
-                                mainColor: appConfig.theme.colors.primary[500],
-                                mainColorLight: appConfig.theme.colors.primary[400],
-                                mainColorStrong: appConfig.theme.colors.primary[600],
-                            }}
-                        />
-
-                    </Box>
-                    <Box
-                        styleSheet={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            maxWidth: '200px',
-                            padding: '16px',
-                            backgroundColor: appConfig.theme.colors.neutrals[800],
-                            border: '1px solid',
-                            borderColor: appConfig.theme.colors.neutrals[999],
-                            borderRadius: '10px',
-                            flex: 1,
-                            minHeight: '240px',
-                        }}
-                    >
-                        <Image
-                            styleSheet={{
-                                borderRadius: '50%',
-                                marginBottom: '16px',
-                            }}
-                            src={`https://github.com/${username}.png`}
-                        />
-                        <Text
-                            variant="body4"
-                            styleSheet={{
-                                color: appConfig.theme.colors.neutrals[200],
-                                backgroundColor: appConfig.theme.colors.neutrals[900],
-                                padding: '3px 10px',
-                                borderRadius: '1000px'
-                            }}
-                        >
-                            {username}
-                        </Text>
-                    </Box>
-                </Box>
+              <TextField
+              value={username}
+              onChange={function (event){
+                console.log("usuario digitou", event);
+                // Onde ta o valor?
+                const valor = event.target.value;
+                //testa tamanho
+                setShowImage(valor.length>2 ? true : false);
+                //trocar valor variavel
+                setUsername(valor);
+                if(valor.length>2){
+                  setUsernamevalid(valor);
+                }else{
+                  setUsernamevalid("");
+                }
+              }}
+                fullWidth
+                textFieldColors={{
+                  neutral: {
+                    textColor: appConfig.theme.colors.neutrals[200],
+                    mainColor: appConfig.theme.colors.neutrals[900],
+                    mainColorHighlight: appConfig.theme.colors.primary[500],
+                    backgroundColor: appConfig.theme.colors.neutrals[800],
+                  },
+                }}
+              />
+              <Button
+                type='submit'
+                label='Entrar'
+                fullWidth
+                buttonColors={{
+                  contrastColor: appConfig.theme.colors.neutrals["000"],
+                  mainColor: appConfig.theme.colors.primary[500],
+                  mainColorLight: appConfig.theme.colors.primary[400],
+                  mainColorStrong: appConfig.theme.colors.primary[600],
+                }}
+              />
             </Box>
-        </>
+            {/* Formulário */}
+  
+  
+            {/* Photo Area */}
+            <Box
+              styleSheet={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                maxWidth: '200px',
+                padding: '16px',
+                backgroundColor: appConfig.theme.colors.neutrals[800],
+                border: '1px solid',
+                borderColor: appConfig.theme.colors.neutrals[999],
+                borderRadius: '10px',
+                flex: 1,
+                minHeight: '240px',
+              }}
+            >
+              <div style={{display: showImage ? 'block' : 'none' }}>
+                <Image
+                  styleSheet={{
+                    borderRadius: '50%',
+                    marginBottom: '16px',
+                  }}
+                  src={`https://github.com/${username}.png`}
+                />
+              </div>
+              <Text
+                variant="body4"
+                styleSheet={{
+                  color: appConfig.theme.colors.neutrals[200],
+                  backgroundColor: appConfig.theme.colors.neutrals[900],
+                  padding: '3px 10px',
+                  borderRadius: '1000px'
+                }}
+              >
+                {username} &nbsp; 
+                ({datauser.name})
+              </Text>
+            </Box>
+            {/* Photo Area */}
+          </Box>
+        </Box>
+      </>
     );
 }
-
